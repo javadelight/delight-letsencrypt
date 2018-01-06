@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><!-- Template: Source 
 	+ GWT + in workspace dependencies 27.11.2010 --><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<groupId>de.mxro.maven.tools</groupId>
-	<artifactId>maven-tools</artifactId>
+	<groupId>org.javadelight</groupId>
+	<artifactId>delight-letsencrypt</artifactId>
 	<version>0.0.3</version>
-	<description>Generic tools to work with Maven projects and repositories.
+	<description>Java tools to work with letsencrypt.
 	</description>
 
 	<properties>
@@ -12,8 +12,8 @@
 			org.junit,
 			*
 		</module.importedPackages>
-		<module.exportedPackages>!de.mxro.maven.tools.internal*,
-			de.mxro.maven.tools
+		<module.exportedPackages>!delight.letsencrypt.internal*,
+			delight.letsencrypt*
 		</module.exportedPackages>
 		<module.serviceDefinitions>
 		</module.serviceDefinitions>
