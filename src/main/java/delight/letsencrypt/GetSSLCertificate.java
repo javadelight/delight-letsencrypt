@@ -44,11 +44,7 @@ import delight.async.jre.Async;
 import delight.functional.Success;
 
 /**
- * A simple client test tool.
- * <p>
- * Pass the names of the domains as parameters.
- * <p>
- * Class based on example for acmej client project
+ * <p>A simple class that obtains an SSL certificate for a Java application.
  */
 public class GetSSLCertificate {
 	public static String USER_KEY_FILE_NAME = "user.key";
