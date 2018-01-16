@@ -125,7 +125,7 @@ public class GetSSLCertificate {
 			LOG.error("Failed to get a certificate for domains " + domains, ex);
 		}
 
-		ConvertToKeystore.convert(new File("output"));
+		ConvertToKeystore.convert(targetDir);
 
 		LOG.info("Java keystore generated in "+targetDir.getAbsolutePath()+"/server.jks. Keystore and cerificate password is 'password'");
 	}
