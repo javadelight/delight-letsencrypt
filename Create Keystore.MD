@@ -10,4 +10,4 @@ openssl pkcs12 -export -in output/domain-chain.crt -inkey output/domain.key -out
 
 4. Import CSR reply (right click on KEY).
 
-5. Import domain, by going to Examine file and then clicking Import
+5. Import domain key, by going to Examine file and then clicking Import

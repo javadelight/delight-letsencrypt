@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.URI;
 import java.security.KeyPair;
@@ -31,6 +32,15 @@ import org.shredzone.acme4j.util.CertificateUtils;
 import org.shredzone.acme4j.util.KeyPairUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import de.mxro.httpserver.HttpService;
+import de.mxro.httpserver.netty3.Netty3Server;
+import de.mxro.httpserver.netty3.Netty3ServerComponent;
+import de.mxro.httpserver.services.Services;
+import delight.async.callbacks.SimpleCallback;
+import delight.async.callbacks.ValueCallback;
+import delight.async.jre.Async;
+import delight.functional.Success;
 
 /**
  * A simple client test tool.
@@ -61,7 +71,35 @@ public class GetSSLCertificate {
     private static final Logger LOG = LoggerFactory.getLogger(GetSSLCertificate.class);
 
     private enum ChallengeType { HTTP, DNS, TLSSNI }
+    
+    
+    Netty3ServerComponent server;
+    
+    /**
+     * Invokes this example.
+     *
+     * @param args
+     *            Domains to get a certificate for
+     */
+    public static void main(String... args) {
+        if (args.length == 0) {
+            System.err.println("Usage: GetSSLCertificate <domain>...");
+            System.exit(1);
+        }
 
+        LOG.info("Starting up...");
+
+        Security.addProvider(new BouncyCastleProvider());
+
+        Collection<String> domains = Arrays.asList(args);
+        try {
+            GetSSLCertificate ct = new GetSSLCertificate();
+            ct.fetchCertificate(domains);
+        } catch (Exception ex) {
+            LOG.error("Failed to get a certificate for domains " + domains, ex);
+        }
+    }
+    
     /**
      * Generates a certificate for the given domains. Also takes care for the registration
      * process.
@@ -117,7 +155,7 @@ public class GetSSLCertificate {
         }
 
         // That's all! Configure your web server to use the DOMAIN_KEY_FILE and
-        // DOMAIN_CHAIN_FILE for the requested domans.
+        // DOMAIN_CHAIN_FILE for the requested domains.
     }
 
     /**
@@ -247,6 +285,24 @@ public class GetSSLCertificate {
         if (challenge.getStatus() != Status.VALID) {
             throw new AcmeException("Failed to pass the challenge for domain " + domain + ", ... Giving up.");
         }
+        	
+        Async.waitFor((cb) -> {
+        	server.stop(new SimpleCallback() {
+				
+				@Override
+				public void onFailure(Throwable t) {
+					cb.onFailure(t);
+				}
+				
+				@Override
+				public void onSuccess() {
+					cb.onSuccess(Success.INSTANCE);
+				}
+			});
+        	
+        });
+        
+        
     }
 
     /**
@@ -271,10 +327,12 @@ public class GetSSLCertificate {
         if (challenge == null) {
             throw new AcmeException("Found no " + Http01Challenge.TYPE + " challenge, don't know what to do...");
         }
-
+        
+        String challengePath = "/.well-known/acme-challenge/"+challenge.getToken();
+        
         // Output the challenge, wait for acknowledge...
         LOG.info("Please create a file in your web server's base directory.");
-        LOG.info("It must be reachable at: http://" + domain + "/.well-known/acme-challenge/" + challenge.getToken());
+        LOG.info("It must be reachable at: http://" + domain + challengePath);
         LOG.info("File name: " + challenge.getToken());
         LOG.info("Content: " + challenge.getAuthorization());
         LOG.info("The file must not contain any leading or trailing whitespaces or line breaks!");
@@ -282,10 +340,25 @@ public class GetSSLCertificate {
 
         StringBuilder message = new StringBuilder();
         message.append("Please create a file in your web server's base directory.\n\n");
-        message.append("http://").append(domain).append("/.well-known/acme-challenge/").append(challenge.getToken()).append("\n\n");
+        message.append("http://").append(domain).append(challengePath).append("\n\n");
         message.append("Content:\n\n");
         message.append(challenge.getAuthorization());
-        acceptChallenge(message.toString());
+        
+        try {
+			HttpService authorizationService = Services.data(challenge.getAuthorization().getBytes("UTF-8"), "plain/text");
+				
+			server = Async.waitFor((cb)->{
+				Netty3Server.start(authorizationService, 80, cb);
+			});
+			
+			//acceptChallenge(message.toString());
+			
+			
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException(e);
+		}
+        
+        
 
         return challenge;
     }
@@ -409,42 +482,19 @@ public class GetSSLCertificate {
      *            {@link URI} of the Terms of Service
      */
     public void acceptAgreement(Registration reg, URI agreement) throws AcmeException {
-        int option = JOptionPane.showConfirmDialog(null,
-                        "Do you accept the Terms of Service?\n\n" + agreement,
-                        "Accept ToS",
-                        JOptionPane.YES_NO_OPTION);
-        if (option == JOptionPane.NO_OPTION) {
-            throw new AcmeException("User did not accept Terms of Service");
-        }
+//        int option = JOptionPane.showConfirmDialog(null,
+//                        "Do you accept the Terms of Service?\n\n" + agreement,
+//                        "Accept ToS",
+//                        JOptionPane.YES_NO_OPTION);
+//        if (option == JOptionPane.NO_OPTION) {
+//            throw new AcmeException("User did not accept Terms of Service");
+//        }
 
-        // Motify the Registration and accept the agreement
+        // Modify the Registration and accept the agreement
         reg.modify().setAgreement(agreement).commit();
         LOG.info("Updated user's ToS");
     }
 
-    /**
-     * Invokes this example.
-     *
-     * @param args
-     *            Domains to get a certificate for
-     */
-    public static void main(String... args) {
-        if (args.length == 0) {
-            System.err.println("Usage: GetSSLCertificate <domain>...");
-            System.exit(1);
-        }
-
-        LOG.info("Starting up...");
-
-        Security.addProvider(new BouncyCastleProvider());
-
-        Collection<String> domains = Arrays.asList(args);
-        try {
-            GetSSLCertificate ct = new GetSSLCertificate();
-            ct.fetchCertificate(domains);
-        } catch (Exception ex) {
-            LOG.error("Failed to get a certificate for domains " + domains, ex);
-        }
-    }
+    
 
 }

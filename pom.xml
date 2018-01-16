@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><!-- Template: Source 
-	+ GWT + in workspace dependencies 27.11.2010 --><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	+ GWT + in workspace dependencies 27.11.2010 -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<groupId>org.javadelight</groupId>
 	<artifactId>delight-letsencrypt</artifactId>
-	<version>0.0.3</version>
+	<version>0.0.4-SNAPSHOT</version>
 	<description>Java tools to work with letsencrypt.
 	</description>
 	<properties>
@@ -20,38 +22,51 @@
 
 	<!-- Dependent Modules -->
 	<dependencies>
-		
+
 		<dependency>
 			<groupId>org.shredzone.acme4j</groupId>
 			<artifactId>acme4j-client</artifactId>
 			<version>0.11</version>
 		</dependency>
-		
-		 <dependency>
-            <groupId>org.shredzone.acme4j</groupId>
-            <artifactId>acme4j-utils</artifactId>
-            <version>0.11</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcpg-jdk15on</artifactId>
-            <version>1.57</version>
-        </dependency>
-        
-        
-         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>1.7.25</version>
-            <scope>runtime</scope>
-        </dependency>
-		
+
+		<dependency>
+			<groupId>org.shredzone.acme4j</groupId>
+			<artifactId>acme4j-utils</artifactId>
+			<version>0.11</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcpg-jdk15on</artifactId>
+			<version>1.59</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+			<version>1.7.25</version>
+			<scope>runtime</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>de.mxro.file</groupId>
 			<artifactId>file-api</artifactId>
 			<version>0.0.7</version>
 		</dependency>
+
+		<dependency>
+			<artifactId>delight-http</artifactId>
+			<groupId>org.javadelight</groupId>
+			<version>0.1.0</version>
+		</dependency>
+
+		<dependency>
+			<artifactId>http-server-netty3</artifactId>
+			<groupId>de.mxro.httpserver.netty3</groupId>
+			<version>0.0.7</version>
+		</dependency>
+
 		<dependency>
 			<groupId>de.mxro.process</groupId>
 			<artifactId>java-start-process</artifactId>
@@ -64,16 +79,7 @@
 			<version>0.0.3</version>
 		</dependency>
 
-		
 
-		<dependency>
-			<groupId>org.eclipse.xtend</groupId>
-			<artifactId>org.eclipse.xtend.lib.gwt</artifactId>
-			<version>2.13.0</version>
-			<scope>test</scope>
-		</dependency>
-
-		
 
 		<dependency>
 			<groupId>junit</groupId>
@@ -90,80 +96,19 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<name>${project.artifactId}</name>
-	<packaging>bundle</packaging>
+	<packaging>jar</packaging>
 	<build>
 
 		<plugins>
+			
+			
+			
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
-			</plugin>
-
-
-			<!-- FOR BUNDLE MANAGEMENT -->
-			<!-- The Maven bundle plugin generates Meta-data required for OSGi -->
-
-			<plugin>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>maven-bundle-plugin</artifactId>
-				<extensions>true</extensions>
-				<version>2.5.3</version>
-				<configuration>
-					<instructions>
-						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-						<Bundle-Version>${project.version}</Bundle-Version>
-						<Import-Package>${module.importedPackages}</Import-Package>
-						<Export-Package>${module.exportedPackages}</Export-Package>
-						<Service-Component>${module.serviceDefinitions}
-						</Service-Component>
-						<Bundle-RequiredExecutionEnvironment>JavaSE-1.6
-						</Bundle-RequiredExecutionEnvironment>
-					</instructions>
-				</configuration>
-			</plugin>
-
-
-
-
-
-			<!-- Cleanup necessary because of PDE tweaks, clear the project directory -->
-			<plugin>
-				<artifactId>maven-clean-plugin</artifactId>
-				<version>2.3</version>
-				<configuration>
-					<filesets>
-						<fileset>
-							<directory>${basedir}</directory>
-							<includes>
-								<include>*.jar</include>
-							</includes>
-							<followSymlinks>false</followSymlinks>
-						</fileset>
-					</filesets>
-				</configuration>
-			</plugin>
-
-			<!-- Keep the MANIFEST.MF used by eclipse in sync with the MANIFEST.MF 
-				created by the maven bundle plugin -->
-			<plugin>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>run</goal>
-						</goals>
-						<configuration>
-							<tasks>
-								<delete file="${basedir}/META-INF/MANIFEST.MF"/>
-								<copy file="target/classes/META-INF/MANIFEST.MF" tofile="${basedir}/META-INF/MANIFEST.MF"/>
-							</tasks>
-						</configuration>
-					</execution>
-				</executions>
 			</plugin>
 
 			<plugin>
@@ -278,7 +223,32 @@
 					</reportPlugins>
 				</configuration>
 			</plugin>
+			
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.4</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>attached</goal>
+						</goals>
+						<phase>package</phase>
+						<configuration>
+							<descriptors>
+								<descriptor>src/assemble/distribution.xml</descriptor>
+							</descriptors>
 
+							<archive>
+								<manifest>
+									<mainClass>delight.letsencrypt.GetSSLCertificate</mainClass>
+								</manifest>
+							</archive>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 
 		</plugins>
 
@@ -323,10 +293,10 @@
 
 		</resources>
 
-		
+
 	</build>
 
-	
+
 
 	<developers>
 		<developer>
