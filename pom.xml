@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<groupId>org.javadelight</groupId>
 	<artifactId>delight-letsencrypt</artifactId>
-	<version>0.0.4-SNAPSHOT</version>
+	<version>0.0.4</version>
 	<description>Java tools to work with letsencrypt.
 	</description>
 	<properties>
