@@ -243,7 +243,7 @@ public class GetSSLCertificate {
 			// The Key Pair is already registered. getLocation() contains the
 			// URL of the existing registration's location. Bind it to the session.
 			reg = Registration.bind(session, ex.getLocation());
-			LOG.info("Account does already exist, URI: " + reg.getLocation();
+			LOG.info("Account does already exist, URI: " + reg.getLocation());
 		}
 
 		return reg;
