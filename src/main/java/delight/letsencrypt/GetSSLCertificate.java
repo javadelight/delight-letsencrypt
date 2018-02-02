@@ -38,7 +38,7 @@ import de.mxro.file.Jre.FilesJre;
 import de.mxro.httpserver.HttpService;
 import de.mxro.httpserver.netty3.Netty3Server;
 import de.mxro.httpserver.netty3.Netty3ServerComponent;
-import de.mxro.httpserver.services.Services;
+import de.mxro.httpserver.services.HttpServices;
 import delight.async.callbacks.SimpleCallback;
 import delight.async.jre.Async;
 import delight.functional.Success;
@@ -377,7 +377,7 @@ public class GetSSLCertificate {
 		message.append(challenge.getAuthorization());
 
 		try {
-			HttpService authorizationService = Services.data(challenge.getAuthorization().getBytes("UTF-8"),
+			HttpService authorizationService = HttpServices.data(challenge.getAuthorization().getBytes("UTF-8"),
 					"plain/text");
 
 			server = Async.waitFor((cb) -> {

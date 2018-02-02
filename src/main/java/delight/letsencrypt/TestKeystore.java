@@ -11,7 +11,7 @@ import de.mxro.httpserver.HttpService;
 import de.mxro.httpserver.netty3.Netty3Server;
 import de.mxro.httpserver.netty3.Netty3ServerComponent;
 import de.mxro.httpserver.netty3.Netty3ServerConfiguration;
-import de.mxro.httpserver.services.Services;
+import de.mxro.httpserver.services.HttpServices;
 import de.mxro.sslutils.SslKeyStoreData;
 import de.mxro.sslutils.SslUtils;
 import delight.async.callbacks.ValueCallback;
@@ -38,7 +38,7 @@ public class TestKeystore {
 			
 			@Override
 			public HttpService service() {
-				return Services.data("hello".getBytes(), "plain/text");
+				return HttpServices.data("hello".getBytes(), "plain/text");
 			}
 			
 			@Override
