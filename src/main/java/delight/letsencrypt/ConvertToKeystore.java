@@ -18,6 +18,8 @@ public class ConvertToKeystore {
 	public static void convert(File dir) {
 		String script = "";
 		script += "#/bin/bash\n";
+		script += "rm server.p12\n";
+		script += "server.jks\n";
 		script += "yes \"\" | openssl pkcs12 -export -in "+GetSSLCertificate.DOMAIN_CHAIN_FILE_NAME+" -inkey "+GetSSLCertificate.DOMAIN_KEY_FILE_NAME+" -out server.p12 -name cert -CAfile "+GetSSLCertificate.DOMAIN_CSR_FILE_NAME+" -caname root -passout pass:password\n";
 		script += "keytool -genkey -alias server -keystore server.jks -storepass password -keypass password -dname \"CN=Jane Due, OU=JavaSoft, O=Sun, L=Cupertino, S=California, C=US\"\n";
 		script += "keytool -delete -alias server -keystore server.jks -storepass password -keypass password\n";

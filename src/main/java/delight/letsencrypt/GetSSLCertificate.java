@@ -127,7 +127,7 @@ public class GetSSLCertificate {
 
 		ConvertToKeystore.convert(targetDir);
 
-		LOG.info("Java keystore generated in "+targetDir.getAbsolutePath()+"/server.jks. Keystore and cerificate password is 'password'");
+		LOG.info("Java keystore generated in "+targetDir.getAbsolutePath()+"/server.jks. Keystore and certificate password is 'password'");
 	}
 
 	/**
