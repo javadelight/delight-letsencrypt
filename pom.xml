@@ -24,7 +24,7 @@
 		<dependency>
 			<groupId>org.shredzone.acme4j</groupId>
 			<artifactId>acme4j-client</artifactId>
-			<version>3.2.0</version>
+			<version>3.2.1</version>
 		</dependency>
 
 		<dependency>
